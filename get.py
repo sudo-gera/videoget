@@ -51,7 +51,10 @@ for w in q:
  t=w['title']
  for e in ban:
   t=t.replace(e,'_')
- f=w['files']
+ if 'files' not in w:
+  f=dict()
+ else:
+  f=w['files']
  d=w['duration']
  while list(f.keys()) and (f[list(f.keys())[-1]][:28]!='https://pvv4.vkuservideo.net' or 'mp4_' not in list(f.keys())[-1]):
   del(f[list(f.keys())[-1]])
