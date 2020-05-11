@@ -14,8 +14,10 @@ from os.path import abspath
 from webbrowser import open as webopen
 from sys import argv
 
-
-url=open('url').read()
+try:
+ url=open('url').read()
+except:
+ url=popen('cat ~/c/url').read()
 token=url.split('#')[1].split('&')[0].split('=')[1]
 
 
@@ -46,6 +48,7 @@ if len(argv)<2:
  argv=[argv[0],0]
  print('text to search:')
  argv[1]=input()
+
 skey=argv[1]
 if len(argv)>=3:
  mode=argv[2]
