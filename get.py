@@ -14,9 +14,10 @@ from os.path import abspath
 from webbrowser import open as webopen
 from sys import argv
 
-
-#url=open('url').read()
-url=popen('cat ~/c/url').read()
+try:
+ url=open('url').read()
+except:
+ url=popen('cat ~/c/url').read()
 token=url.split('#')[1].split('&')[0].split('=')[1]
 
 
