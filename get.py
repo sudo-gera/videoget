@@ -46,7 +46,7 @@ def com(a):
 if len(argv)<2:
  argv=[argv[0],0]
  print('search mode longer')
- argv[1]=input()
+ exit()
 skey=argv[1]
 if len(argv)>=3:
  mode=argv[2]
@@ -64,7 +64,7 @@ if len(argv)>=5:
 else:
  file={'txt':'tmp.sh','url':'tmp.html','web':'tmp.html'}[mode]
 q=sum([api('video.search','q='+skey+'&count=200&offset='+str(w*200)+'&sort=0&adult=1&filters=mp4&longer='+longer)['response']['items'] for w in range(5)],[])
-ban='|/ ()\t\n'
+ban='|/ ()\t\n\\'
 q.sort(key=com)
 c=0
 ext=[]
