@@ -1,5 +1,27 @@
 
 
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.request import urlopen as u
+from urllib.parse import unquote as uqu
+from json import loads as l
+from sys import argv
+import os
+import random
+from urllib.request import urlopen
+from json import loads
+from json import dumps
+from urllib.parse import quote
+from time import sleep
+from time import time
+from time import asctime
+from traceback import format_exc as error
+from os import popen
+from random import shuffle
+from os.path import exists
+from os.path import abspath
+from os import chdir
+import requests
+from random import randint
 from urllib.request import urlopen
 from json import loads
 from json import dumps
@@ -46,7 +68,7 @@ def com(a):
 
 if len(argv)<2:
  argv=[argv[0],0]
- print('search mode longer')
+ print('search mode longer server')
  argv[1]=input()
 
 skey=argv[1]
@@ -62,38 +84,97 @@ if len(argv)>=4:
 else:
  longer='0'
 if len(argv)>=5:
- file=argv[4]
+ serv=int(argv[4])
+else:
+ serv=0
+if len(argv)>=6:
+ file=argv[5]
 else:
  file={'txt':'tmp.sh','url':'tmp.html','web':'tmp.html'}[mode]
-q=sum([api('video.search','q='+skey+'&count=200&offset='+str(w*200)+'&sort=0&adult=1&filters=mp4&longer='+longer)['response']['items'] for w in range(5)],[])
-ban='|/ ()\t\n'
-q.sort(key=com)
-c=0
-ext=[]
-for w in q:
- c+=1
- t=w['title']
- if 'image' in w:
-  img=w['image'][0]['url']
- else:
-  img=''
- for e in ban:
-  t=t.replace(e,'_')
- if 'files' not in w:
-  f=dict()
- else:
-  f=w['files']
- d=w['duration']
- while list(f.keys()) and (f[list(f.keys())[-1]][:28]!='https://pvv4.vkuservideo.net' or 'mp4_' not in list(f.keys())[-1]):
-  del(f[list(f.keys())[-1]])
-# if not arg:
-#  l=list(f.keys())
-#  if not all(['mp4_' in w for w in l]):
-#   print('\x1b[32m',l,'\x1b[0m')
- if list(f.keys()):
-# if 1:
-  ext+=[[img,c,d,t,f[list(f.keys())[-1]]]]
+def run(skey,longer):
+ q=sum([api('video.search','q='+skey+'&count=200&offset='+str(w*200)+'&sort=0&adult=1&filters=mp4&longer='+longer)['response']['items'] for w in range(5)],[])
+ ban='|/ ()\t\n'
+ q.sort(key=com)
+ c=0
+ ext=[]
+ for w in q:
+  c+=1
+  t=w['title']
+  if 'image' in w:
+   img=w['image'][0]['url']
+  else:
+   img=''
+  for e in ban:
+   t=t.replace(e,'_')
+  if 'files' not in w:
+   f=dict()
+  else:
+   f=w['files']
+  d=w['duration']
+  while list(f.keys()) and (f[list(f.keys())[-1]][:28]!='https://pvv4.vkuservideo.net' or 'mp4_' not in list(f.keys())[-1]):
+   del(f[list(f.keys())[-1]])
+ # if not arg:
+ #  l=list(f.keys())
+ #  if not all(['mp4_' in w for w in l]):
+ #   print('\x1b[32m',l,'\x1b[0m')
+  if list(f.keys()):
+ # if 1:
+   ext+=[[img,c,d,t,f[list(f.keys())[-1]]]]
+ return ext
 
+class MyServer(BaseHTTPRequestHandler):
+ def do_GET(self):
+  self.send_response(200)
+  path=self.path.split('?',1)[1]
+  path=path.split('&')
+  path=[turple(w.split('=')) for w in path]
+  path=[[uqu(w[0]),uqu(w[1])] for w in path]
+  path=[turple(w) for w in path]
+  path=dict(path)
+  global longer,skey
+  if 'longer' in path:
+   longer=path['longer']
+  if 'skey' in path:
+   skey=path['skey']
+  ext=run(skey,longer)
+  self.send_header("Content-type", "text/html; charset=utf-8")
+  self.end_headers()
+  self.wfile.write('''
+  <form>
+   <textarea name="skey">{}</textarea>
+   <textarea name="longer">{}</textarea>
+   <input type="submit" value="save vk token">
+  </form>
+  '''.format(skey,longer).encode())
+  self.wfile.write(('<html><body>').encode())
+  for w in ext:
+   u,c,d,t,f=w
+   self.wfile.write(('<a href='+f+' download><img src='+u+'>'+str(d//3600)+':'+str(d%3600//60)+':'+str(d%60)+'\t'+t+'.mp4</a><br>\n<pre>'+'-'*12800+'</pre>\n<br>').encode())
+  self.wfile.write('<!DOCTYPE html></body></html>'.encode())
+
+if serv:
+ st=1
+ while st:
+  try:
+   myServer = HTTPServer((hostName, hostPort), MyServer)
+   st=0
+  except:
+   hostPort+=1
+ if mode=='url':
+  print('http://127.0.0.1:{}'.format(hostPort))
+ if mode=='web':
+  webopen('http://127.0.0.1:{}'.format(hostPort))
+ try:
+     myServer.serve_forever()
+ except KeyboardInterrupt:
+     pass
+
+ myServer.server_close()
+ print()
+ exit()
+
+else:
+ ext=run(skey,longer)
 
 if mode=='txt':
  a=open(file,'w')
@@ -123,8 +204,9 @@ if mode in ['url','web']:
  absp=abspath(file)
  if mode=='web':
   webopen(absp)
-  sleep(2)
+  sleep(8)
  else:
   if absp[0]=='/':
    absp=absp[1:]
   print('file:///'+absp)
+
