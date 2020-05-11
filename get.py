@@ -46,7 +46,7 @@ def com(a):
 
 if len(argv)<2:
  argv=[argv[0],0]
- print('text to search:')
+ print('search mode longer')
  argv[1]=input()
 
 skey=argv[1]
