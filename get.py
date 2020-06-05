@@ -20,7 +20,7 @@ from random import shuffle
 from os.path import exists
 from os.path import abspath
 from os import chdir
-import requests
+#import requests
 from random import randint
 from urllib.request import urlopen
 from json import loads
@@ -91,7 +91,8 @@ if len(argv)>=6:
 else:
  file={'txt':'tmp.sh','url':'tmp.html','web':'tmp.html'}[mode]
 def run(skey,longer):
- q=sum([api('video.search','q='+skey+'&count=200&offset='+str(w*200)+'&sort=2&adult=1&filters=mp4&longer='+longer)['response']['items'] for w in range(5)],[])
+ q=sum([api('video.search','q='+skey+'&count=200&offset='+str(w*200)+'&sort=2&adult=1&longer='+longer)['response']['items'] for w in range(5)],[])
+# q=sum([api('video.search','q='+skey+'&count=200&offset='+str(w*200)+'&sort=2&adult=1&filters=mp4&longer='+longer)['response']['items'] for w in range(5)],[])
  ban='|/ ()\t\n'
  q.sort(key=com)
  c=0
@@ -110,7 +111,8 @@ def run(skey,longer):
   else:
    f=w['files']
   d=w['duration']
-  while list(f.keys()) and (f[list(f.keys())[-1]][:28]!='https://pvv4.vkuservideo.net' or 'mp4_' not in list(f.keys())[-1]):
+  while list(f.keys()) and ('.vkuservideo.net' not in f[list(f.keys())[-1]] or 'mp4_' not in list(f.keys())[-1]):
+#   print(f[list(f.keys())[-1]])
    del(f[list(f.keys())[-1]])
  # if not arg:
  #  l=list(f.keys())
@@ -195,7 +197,7 @@ if mode=='txt':
  for w in ext:
   u,c,d,t,f=w
   if c in ch:
-   a.write('wget '+f+' -O '+t+'.mp4\n')
+   a.write('wget '+f+' -O "'+t+'.mp4"\n')
  a.close()
 
 if mode in ['url','web']:
