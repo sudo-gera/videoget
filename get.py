@@ -59,7 +59,7 @@ def api(path,data=''):
 def com(a):
  q=list(a['title'])
  for e in range(len(q)):
-  if not q[e].isdigit():
+  if not q[e] in '1234567890':
    q[e]='-'
  q=''.join(q).split('-')
  q=[int(w) for w in q if w]
@@ -90,10 +90,16 @@ if len(argv)>=6:
  file=argv[5]
 else:
  file={'txt':'tmp.sh','url':'tmp.html','web':'tmp.html'}[mode]
+
+ban='|/ ()\t\n'
+
+def clear(q):
+ return ''.join(['_' if w in ban else w for w in q])
+
+
 def run(skey,longer):
  q=sum([api('video.search','q='+skey+'&count=200&offset='+str(w*200)+'&sort=2&adult=1&longer='+longer)['response']['items'] for w in range(5)],[])
 # q=sum([api('video.search','q='+skey+'&count=200&offset='+str(w*200)+'&sort=2&adult=1&filters=mp4&longer='+longer)['response']['items'] for w in range(5)],[])
- ban='|/ ()\t\n'
  q.sort(key=com)
  c=0
  ext=[]
@@ -104,8 +110,7 @@ def run(skey,longer):
    img=w['image'][0]['url']
   else:
    img=''
-  for e in ban:
-   t=t.replace(e,'_')
+  t=clear(t)
   if 'files' not in w:
    f=dict()
   else:
@@ -188,16 +193,25 @@ if mode=='txt':
  a.write('#оставьте только те строки, которые должны быть скачаны, остальные уберите полностью или добавьте символ # в начало\n')
  for w in ext:
   u,c,d,t,f=w
-  a.write(str(c)+'\t'+str(d//3600)+':'+str(d%3600//60)+':'+str(d%60)+'\t'+t+'.mp4\n')
+  a.write(str(c)+'\t'+str(d//3600)+':'+str(d%3600//60)+':'+str(d%60)+'\t'+t+'\n')
  a.close()
  system('nano '+file)
- ch=[w.split()[0] for w in open(file).read().split('\n') if w]
- ch=[int(w) for w in ch if w.isdigit()]
+ ch=[w.split() for w in open(file).read().split('\n') if w.split()]
+ ch=[[int(w[0])]+w[1:] for w in ch if w[0].isdigit()]
+ names=dict()
+ for w in ch:
+  if len(w)>2:
+   names[w[0]]=clear(w[2])
+  else:
+   names[w[0]]=None
+ ch=[w[0] for w in ch]
  a=open(file,'w')
  for w in ext:
   u,c,d,t,f=w
   if c in ch:
-   a.write('wget '+f+' -O "'+t+'.mp4"\n')
+   if names[c] is not None:
+    t=names[c]
+   a.write('wget "'+f+'" -O "'+t+'.mp4"\n')
  a.close()
 
 if mode in ['url','web']:
