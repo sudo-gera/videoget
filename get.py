@@ -97,7 +97,7 @@ if len(argv) >= 6:
 else:
     file = {'txt': 'tmp.sh', 'url': 'tmp.html', 'web': 'tmp.html'}[mode]
 
-ban = '|/ ()\t\n\\'
+ban = '|/ ()\t\n\\\"\''
 
 
 def clear(q):
