@@ -68,7 +68,7 @@ def com(a):
         if not q[e] in '1234567890':
             q[e] = '-'
     q = ''.join(q).split('-')
-    q = [int(w) for w in q if w]
+    q = [eval(w) for w in q if w]
     return q + [-a['duration'], 0, 0, 0, 0, 0, 0, 0]
 
 
@@ -85,11 +85,11 @@ if mode not in 'url web txt'.split():
     print('uncnown mode')
     exit()
 if len(argv) >= 4:
-    longer = argv[3]
+    longer = str(eval(argv[3]))
 else:
     longer = '0'
 if len(argv) >= 5:
-    serv = int(argv[4])
+    serv = eval(argv[4])
 else:
     serv = 0
 if len(argv) >= 6:
@@ -111,7 +111,7 @@ def run(skey, longer):
                  str(w *
                      200) +
                  '&sort=2&adult=1&longer=' +
-                 longer)['response']['items'] for w in range(5)], [])
+                 str(eval(longer)))['response']['items'] for w in range(5)], [])
 # q=sum([api('video.search','q='+skey+'&count=200&offset='+str(w*200)+'&sort=2&adult=1&filters=mp4&longer='+longer)['response']['items'] for w in range(5)],[])
     q.sort(key=com)
     c = 0
@@ -234,7 +234,7 @@ if mode == 'txt':
     a.close()
     system('nano ' + file)
     ch = [w.split() for w in open(file).read().split('\n') if w.split()]
-    ch = [[int(w[0])] + w[1:] for w in ch if w[0].isdigit()]
+    ch = [[eval(w[0])] + w[1:] for w in ch if w[0].isdigit()]
     names = dict()
     for w in ch:
         if len(w) > 2:
