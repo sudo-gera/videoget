@@ -68,7 +68,7 @@ def com(a):
         if not q[e] in '1234567890':
             q[e] = '-'
     q = ''.join(q).split('-')
-    q = [eval(w) for w in q if w]
+    q = [int(w) for w in q if w]
     return q + [-a['duration'], 0, 0, 0, 0, 0, 0, 0]
 
 
