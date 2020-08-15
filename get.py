@@ -95,7 +95,7 @@ else:
 if len(argv) >= 6:
     maxq=eval(argv[5])
 else:
-    maxq=0
+    maxq=float('inf')
 if len(argv) >= 7:
     file = argv[6]
 else:
@@ -137,7 +137,7 @@ def run(skey, longer):
         while list(f.keys()) and (
 #                '.vkuservideo.net' not in f[list(f.keys())[-1]] or
                 'mp4_' not in list(f.keys())[-1]
-                #or eval(list(f.keys())[-1][list(f.keys())[-1].index('mp4_')+4:])>maxq
+                or eval(list(f.keys())[-1][list(f.keys())[-1].index('mp4_')+4:])>maxq
                 ):
             #   print(f[list(f.keys())[-1]])
             del(f[list(f.keys())[-1]])
@@ -234,7 +234,7 @@ else:
 
 if mode == 'txt':
     a = open(file, 'w')
-    a.write('# оставьте только те строки, которые должны быть скачаны имя можно поменять на то, под которым должен сохраниться файл,\n')
+    a.write('# оставьте только те строки, которые должны быть скачаны, имя можно поменять на то, под которым должен сохраниться файл,\n')
     a.write('# остальные уберите полностью или добавьте символ # в начало\n')
     for w in ext:
         u, c, d, t, f = w
