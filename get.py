@@ -74,7 +74,7 @@ def com(a):
 
 if len(argv) < 2:
     argv = [argv[0], 0]
-    print('search mode longer server')
+    print('search mode longer server maxq')
     exit()
 skey = argv[1]
 if len(argv) >= 3:
@@ -93,7 +93,11 @@ if len(argv) >= 5:
 else:
     serv = 0
 if len(argv) >= 6:
-    file = argv[5]
+    maxq=eval(argv[5])
+else:
+    maxq=0
+if len(argv) >= 7:
+    file = argv[6]
 else:
     file = {'txt': 'tmp.sh', 'url': 'tmp.html', 'web': 'tmp.html'}[mode]
 
@@ -129,8 +133,12 @@ def run(skey, longer):
         else:
             f = w['files']
         d = w['duration']
-        while list(f.keys()) and ('.vkuservideo.net' not in f[list(
-                f.keys())[-1]] or 'mp4_' not in list(f.keys())[-1]):
+        global maxq
+        while list(f.keys()) and (
+#                '.vkuservideo.net' not in f[list(f.keys())[-1]] or
+                'mp4_' not in list(f.keys())[-1]
+                #or eval(list(f.keys())[-1][list(f.keys())[-1].index('mp4_')+4:])>maxq
+                ):
             #   print(f[list(f.keys())[-1]])
             del(f[list(f.keys())[-1]])
     # if not arg:
